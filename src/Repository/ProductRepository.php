@@ -40,4 +40,19 @@ class ProductRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findBySearch(?string $search): array
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        if ($search) {
+            // Rechercher dans le nom du produit en utilisant LIKE pour la correspondance partielle
+            $qb->andWhere('p.serialNumber LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        return $qb->orderBy('p.serialNumber', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
 }

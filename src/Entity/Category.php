@@ -4,7 +4,12 @@ namespace App\Entity;
 
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
+#[UniqueEntity(
+    fields: ['name'],
+    message: 'Cette categorie existe déjà.',
+)]
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
 {
@@ -13,7 +18,7 @@ class Category
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $name = null;
 
     public function getId(): ?int

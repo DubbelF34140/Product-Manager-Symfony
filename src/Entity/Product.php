@@ -13,12 +13,18 @@ class Product
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $serialNumber = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?ProductType $ProductType = null;
+    private ?ProductType $productType = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $status = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $comment = null;
 
     public function getId(): ?int
     {
@@ -39,13 +45,41 @@ class Product
 
     public function getProductType(): ?ProductType
     {
-        return $this->ProductType;
+        return $this->productType;
     }
 
-    public function setProductType(?ProductType $ProductType): static
+    public function setProductType(?ProductType $productType): void
     {
-        $this->ProductType = $ProductType;
+        $this->productType = $productType;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getSerialNumber();
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): static
+    {
+        $this->status = $status;
 
         return $this;
     }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): static
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
 }

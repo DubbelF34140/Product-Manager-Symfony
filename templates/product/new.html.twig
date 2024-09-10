@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un nouveau produit{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Créer un nouveau produit</h1>
+
+        <!-- Formulaire de création de produit -->
+        {{ form_start(form) }}
+
+        <div class="form-group mt-3">
+            {{ form_label(form.serialNumber) }}
+            {{ form_widget(form.serialNumber, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.serialNumber) }}
+        </div>
+
+        <div class="form-group mt-3">
+            {{ form_label(form.productType) }}
+            {{ form_widget(form.productType, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.productType) }}
+        </div>
+
+        <div class="form-group mt-3">
+            {{ form_label(form.comment) }}
+            {{ form_widget(form.comment, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.comment) }}
+        </div>
+
+        <div class="form-group mt-3" style="display: none;">
+            {{ form_widget(form.status, {'attr': {'type': 'hidden'}}) }}
+        </div>
+
+
+
+        <button type="submit" class="btn btn-success mt-3">Créer le produit</button>
+
+        {{ form_end(form) }}
+
+        <!-- Bouton pour revenir à la liste des produits -->
+        <a href="{{ path('app_product_index') }}" class="btn btn-secondary mt-3">Retour à la liste des produits</a>
+    </div>
+{% endblock %}

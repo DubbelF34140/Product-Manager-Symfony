@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de la Categorie : {{ category.name }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>{{ category.name }}</h1>
+        <canvas id="brandChart"></canvas>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const productTypes = {{ productTypes|map(pt => pt.name)|json_encode()|raw }};
+            const productCounts = {{ productCounts|json_encode()|raw }};
+
+            const ctx = document.getElementById('brandChart').getContext('2d');
+            const brandChart = new Chart(ctx, {
+                type: 'bar',  // Type de graphique
+                data: {
+                    labels: productTypes,  // Afficher les noms des types de produits
+                    datasets: [{
+                        label: 'Nombre de produits',
+                        data: productCounts,  // Afficher le nombre de produits pour chaque type
+                        backgroundColor: 'rgba(83,192,75,0.2)',
+                        borderColor: 'rgb(75,192,81)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true
+                        }
+                    }
+                }
+            });
+        </script>
+    </div>
+{% endblock %}

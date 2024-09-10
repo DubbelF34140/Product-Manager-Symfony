@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Marque{% endblock %}
+
+{% block body %}
+    <h1>Modifier la Marque</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    <button class="btn btn-warning">Modifier</button>
+    {{ form_end(form) }}
+{% endblock %}

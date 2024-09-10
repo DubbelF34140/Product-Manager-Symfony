@@ -2,17 +2,89 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
+use App\Form\CategoryType;
+use App\Repository\CategoryRepository;
+use App\Repository\ProductTypeRepository;
+use App\Service\ProductQuantityService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
 
 class CategoryController extends AbstractController
 {
-    #[Route('/category', name: 'app_category')]
-    public function index(): Response
+    #[Route('/category', name: 'app_category_index')]
+    public function index(CategoryRepository $categoryRepository): Response
     {
+        $categories = $categoryRepository->findAll();
         return $this->render('category/index.html.twig', [
-            'controller_name' => 'CategoryController',
+            'categories' => $categories,
         ]);
+    }
+
+    #[Route('/category/new', name: 'app_category_new')]
+    public function new(Request $request, EntityManagerInterface $em): Response
+    {
+        $category = new Category();
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->persist($category);
+            $em->flush();
+            return $this->redirectToRoute('app_category_index');
+        }
+
+        return $this->render('category/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+    #[Route('/category/{id}', name: 'app_category_show')]
+    public function show(int $id, CategoryRepository $categoryRepository, ProductTypeRepository $productTypeRepository, ProductQuantityService $productQuantityService): Response
+    {
+        // Récupérer la marque
+        $category = $categoryRepository->find($id);
+
+        // Récupérer tous les types de produits associés à la marque
+        $productTypes = $productTypeRepository->findBy(['category' => $category]);
+
+        // Calculer le nombre de produits par type de produit
+        $productCounts = [];
+        foreach ($productTypes as $productType) {
+            $productCounts[] = $productQuantityService->getProductQuantitiesByType($productType);  // Assurez-vous que l'entité ProductType a une relation avec les produits.
+        }
+
+
+        return $this->render('category/show.html.twig', [
+            'category' => $category,
+            'productTypes' => $productTypes,
+            'productCounts' => $productCounts,
+        ]);
+    }
+
+    #[Route('/category/{id}/edit', name: 'app_category_edit')]
+    public function edit(Request $request, Category $category, EntityManagerInterface $em): Response
+    {
+        $form = $this->createForm(CategoryType::class, $category);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+            return $this->redirectToRoute('app_category_index');
+        }
+
+        return $this->render('category/edit.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/category/{id}/delete', name: 'app_category_delete')]
+    public function delete(EntityManagerInterface $em, Category $category): Response
+    {
+        $em->remove($category);
+        $em->flush();
+        return $this->redirectToRoute('app_category_index');
     }
 }

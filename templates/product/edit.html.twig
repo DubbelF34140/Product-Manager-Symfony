@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le produit : {{ product.productType.name }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Modifier le produit : {{ product.productType.name }}</h1>
+
+        <!-- Formulaire HTML classique pour modifier le produit -->
+        <form method="POST" action="{{ path('app_product_new', {id: product.id}) }}">
+            <div class="form-group">
+                <label for="serial_number">Numéro de série</label>
+                <input type="text" id="serial_number" name="serial_number" class="form-control" value="{{ product.serialNumber }}" readonly>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="product_type">Type de produit</label>
+                <select id="product_type" name="product_type" class="form-control">
+                    {% for type in productTypes %}
+                        <option value="{{ type.id }}" {% if type.id == product.productType.id %}selected{% endif %}>
+                            {{ type.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="status">Statut</label>
+                <select id="status" name="status" class="form-control">
+                    <option value="Entrée" {% if product.status == 'En stock' %}selected{% endif %}>En stock</option>
+                    <option value="SAV" {% if product.status == 'SAV' %}selected{% endif %}>En SAV</option>
+                    <option value="Réparation" {% if product.status == 'Réparation' %}selected{% endif %}>En Réparation</option>
+                    <option value="Sortie" {% if product.status == 'Sortie' %}selected{% endif %}>En Clientèle</option>
+                    <option value="Poubelle" {% if product.status == 'Poubelle' %}selected{% endif %}>En Poubelle</option>
+                </select>
+            </div>
+
+            <div class="form-group mt-3">
+                <label for="comment">Commentaire</label>
+                <textarea id="comment" name="comment" class="form-control">{{ product.comment }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">Enregistrer les modifications</button>
+        </form>
+
+        <!-- Bouton pour revenir à la recherche de produit -->
+        <a href="{{ path('app_product_index') }}" class="btn btn-secondary mt-3">Retour à la Liste</a>
+    </div>
+{% endblock %}

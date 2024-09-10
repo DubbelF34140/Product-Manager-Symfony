@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rechercher un produit{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1>Recherche de produit par numéro de série</h1>
+
+        <!-- Formulaire de recherche -->
+        <form method="get" action="{{ path('app_scan') }}">
+            <div class="form-group">
+                <label for="serial_number">Numéro de série</label>
+                <input type="text" id="serial_number" name="serial_number" class="form-control" value="{{ serial_number }}" placeholder="Entrez le numéro de série" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
+        </form>
+
+        <!-- Affichage du produit si trouvé -->
+        {% if product %}
+            <div class="mt-5">
+                <h2>Détails du produit</h2>
+                <p><strong>Nom du produit :</strong> {{ product.productType.name }}</p>
+                <p><strong>Marque :</strong> {{ product.productType.brand.name }}</p>
+                <p><strong>Catégorie :</strong> {{ product.productType.category.name }}</p>
+                <p><strong>Commentaire :</strong> {{ product.comment }}</p>
+                <p><strong>Numéro de série :</strong> {{ product.serialNumber }}</p>
+                <p><strong>Status :</strong>
+                    {% if product.status == "Entrée" %}
+                        En Stock
+                    {% elseif product.status == "SAV" %}
+                        En SAV
+                    {% elseif product.status == "Réparation" %}
+                        En Réparation
+                    {% elseif product.status == "Sortie" %}
+                        En Clientèle
+                    {% elseif product.status == "Poubelle" %}
+                        En Poubelle
+                    {% else %}
+                        Pas de status
+                    {% endif %}
+                </p>
+            </div>
+
+                <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-warning mt-3">Modifier le produit</a>
+            <form method="post" action="{{ path('app_product_sav', {id: product.id}) }}">
+                <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
+                <button type="submit" name="sav_product" class="btn btn-warning btn-sm">
+                    <i class="fas fa-truck"></i> E/S
+                </button>
+            </form>
+            {% if product.status != "Poubelle" %}
+            <form method="post" action="{{ path('app_product_delete', {id: product.id}) }}">
+                <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
+                <button type="submit" name="delete_product" class="btn btn-danger btn-sm">
+                    <i class="fas fa-trash-alt"></i> Poubelle
+                </button>
+            </form>
+            {% endif %}
+            </div>
+        {% elseif serial_number != null %}
+            <div class="mt-5">
+                <p class="text-danger">Aucun produit trouvé pour ce numéro de série.</p>
+                <a href="{{ path('app_product_new', {serialNumber: serial_number}) }}" class="btn btn-success">Créer un nouveau produit</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

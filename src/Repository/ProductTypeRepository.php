@@ -40,4 +40,20 @@ class ProductTypeRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findBySearchTerm(float|bool|int|string|null $search)
+    {
+        $queryBuilder = $this->createQueryBuilder('p');
+
+        if ($search) {
+            $queryBuilder
+                ->andWhere('p.name LIKE :searchTerm')
+                ->setParameter('searchTerm', '%' . $search . '%')
+                ->orderBy('p.name', 'ASC');
+        }
+
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
+
 }

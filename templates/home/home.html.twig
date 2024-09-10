@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <div class="jumbotron text-center">
+        <h1 class="display-4">Bienvenue dans le Gestionnaire de Stock</h1>
+        <p class="lead">Gérez vos marques, catégories, types de produits, produits et mouvements de stock facilement.</p>
+        <hr class="my-4">
+        <p>Utilisez les sections ci-dessous pour naviguer et administrer votre système de gestion de stock.</p>
+    </div>
+
+    <div class="row text-center mt-5">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Marques</h5>
+                    <p class="card-text">Gérez les marques des produits que vous stockez.</p>
+                    <a href="{{ path('app_brand_index') }}" class="btn btn-primary">Gérer les Marques</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Catégories</h5>
+                    <p class="card-text">Gérez les catégories des produits.</p>
+                    <a href="{{ path('app_category_index') }}" class="btn btn-primary">Gérer les Catégories</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Types de Produits</h5>
+                    <p class="card-text">Gérez les types de produits spécifiques.</p>
+                    <a href="{{ path('app_product_type_index') }}" class="btn btn-primary">Gérer les Types de Produits</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row text-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Produits</h5>
+                    <p class="card-text">Gérez les produits spécifiques avec leurs numéros de série.</p>
+                    <a href="{{ path('app_product_index') }}" class="btn btn-primary">Gérer les Produits</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mouvements</h5>
+                    <p class="card-text">Suivez les mouvements de stock (entrées et sorties).</p>
+                    <a href="{{ path('app_movement_index') }}" class="btn btn-primary">Suivre les Mouvements</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

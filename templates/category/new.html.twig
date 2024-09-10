@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle Catégorie{% endblock %}
+
+{% block body %}
+    <h1>Ajouter une nouvelle Catégorie</h1>
+
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    <button class="btn btn-success">Enregistrer</button>
+    {{ form_end(form) }}
+{% endblock %}
