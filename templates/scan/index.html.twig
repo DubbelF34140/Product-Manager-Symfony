@@ -4,64 +4,86 @@
 
 {% block body %}
     <div class="container mt-5">
-        <h1>Recherche de produit par numéro de série</h1>
+        <h1 class="text-center mb-4">Recherche de produit par numéro de série</h1>
 
         <!-- Formulaire de recherche -->
-        <form method="get" action="{{ path('app_scan') }}">
-            <div class="form-group">
-                <label for="serial_number">Numéro de série</label>
-                <input type="text" id="serial_number" name="serial_number" class="form-control" value="{{ serial_number }}" placeholder="Entrez le numéro de série" required>
+        <div class="card shadow-sm mb-5">
+            <div class="card-body">
+                <form method="get" action="{{ path('app_scan') }}">
+                    <div class="mb-3">
+                        <label for="serial_number" class="form-label">Numéro de série</label>
+                        <input type="text" id="serial_number" name="serial_number" class="form-control" value="{{ serial_number }}" placeholder="Entrez le numéro de série" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Rechercher</button>
+                </form>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Rechercher</button>
-        </form>
+        </div>
 
         <!-- Affichage du produit si trouvé -->
         {% if product %}
-            <div class="mt-5">
-                <h2>Détails du produit</h2>
-                <p><strong>Nom du produit :</strong> {{ product.productType.name }}</p>
-                <p><strong>Marque :</strong> {{ product.productType.brand.name }}</p>
-                <p><strong>Catégorie :</strong> {{ product.productType.category.name }}</p>
-                <p><strong>Commentaire :</strong> {{ product.comment }}</p>
-                <p><strong>Numéro de série :</strong> {{ product.serialNumber }}</p>
-                <p><strong>Status :</strong>
-                    {% if product.status == "Entrée" %}
-                        En Stock
-                    {% elseif product.status == "SAV" %}
-                        En SAV
-                    {% elseif product.status == "Réparation" %}
-                        En Réparation
-                    {% elseif product.status == "Sortie" %}
-                        En Clientèle
-                    {% elseif product.status == "Poubelle" %}
-                        En Poubelle
-                    {% else %}
-                        Pas de status
-                    {% endif %}
-                </p>
-            </div>
-
-                <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-warning mt-3">Modifier le produit</a>
-            <form method="post" action="{{ path('app_product_sav', {id: product.id}) }}">
-                <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
-                <button type="submit" name="sav_product" class="btn btn-warning btn-sm">
-                    <i class="fas fa-truck"></i> E/S
-                </button>
-            </form>
-            {% if product.status != "Poubelle" %}
-            <form method="post" action="{{ path('app_product_delete', {id: product.id}) }}">
-                <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
-                <button type="submit" name="delete_product" class="btn btn-danger btn-sm">
-                    <i class="fas fa-trash-alt"></i> Poubelle
-                </button>
-            </form>
-            {% endif %}
+            <div class="card shadow-sm mb-5">
+                <div class="card-header">
+                    <h2 class="card-title">Détails du produit</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nom du produit :</strong> {{ product.productType.name }}</p>
+                    <p><strong>Marque :</strong> {{ product.productType.brand.name }}</p>
+                    <p><strong>Catégorie :</strong> {{ product.productType.category.name }}</p>
+                    <p><strong>Commentaire :</strong> {{ product.comment }}</p>
+                    <p><strong>Numéro de série :</strong> {{ product.serialNumber }}</p>
+                    <p><strong>Status :</strong>
+                        {% if product.status == "Entrée" %}
+                            <span class="badge bg-success">En Stock</span>
+                        {% elseif product.status == "SAV" %}
+                            <span class="badge bg-warning">En SAV</span>
+                        {% elseif product.status == "Réparation" %}
+                            <span class="badge bg-warning">En Réparation</span>
+                        {% elseif product.status == "Sortie" %}
+                            <span class="badge bg-info">En Clientèle</span>
+                        {% elseif product.status == "Poubelle" %}
+                            <span class="badge bg-danger">En Poubelle</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Pas de status</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group d-flex justify-content-between" role="group">
+                        <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-pencil-alt"></i> Modifier le produit
+                        </a>
+                        {% if product.status != "SAV" %}
+                        <form method="post" action="{{ path('app_product_sav', {id: product.id}) }}">
+                            <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
+                            <button type="submit" name="sav_product" class="btn btn-warning">
+                                <i class="fas fa-truck"></i> E/S
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if product.status != "Réparation" %}
+                        <form method="post" action="{{ path('app_product_rep', {id: product.id}) }}">
+                            <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
+                            <button type="submit" name="sav_product" class="btn btn-warning">
+                                <i class="fa-solid fa-screwdriver-wrench"></i> Réparation
+                            </button>
+                        </form>
+                        {% endif %}
+                        {% if product.status != "Poubelle" %}
+                            <form method="post" action="{{ path('app_product_delete', {id: product.id}) }}">
+                                <input type="hidden" name="serial_number" value="{{ product.serialNumber }}">
+                                <button type="submit" name="delete_product" class="btn btn-danger">
+                                    <i class="fas fa-trash-alt"></i> Poubelle
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         {% elseif serial_number != null %}
-            <div class="mt-5">
-                <p class="text-danger">Aucun produit trouvé pour ce numéro de série.</p>
-                <a href="{{ path('app_product_new', {serialNumber: serial_number}) }}" class="btn btn-success">Créer un nouveau produit</a>
+            <div class="alert alert-danger mt-5" role="alert">
+                Aucun produit trouvé pour ce numéro de série.
             </div>
+            <a href="{{ path('app_product_new', {serialNumber: serial_number}) }}" class="btn btn-success w-100">Créer un nouveau produit</a>
         {% endif %}
     </div>
 {% endblock %}

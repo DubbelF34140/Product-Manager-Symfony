@@ -40,4 +40,21 @@ class MovementRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findBySearch(string $search)
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.products', 'p')
+            ->leftJoin('p.productType', 'pt');
+
+        if ($search) {
+            $qb->andWhere('m.type LIKE :search OR p.serialNumber LIKE :search OR pt.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        $qb->orderBy('m.date', 'DESC');
+
+        return $qb->getQuery();
+    }
+
+
 }

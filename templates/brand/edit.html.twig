@@ -6,7 +6,11 @@
     <h1>Modifier la Marque</h1>
 
     {{ form_start(form) }}
-    {{ form_row(form.name) }}
+    <div class="form-group">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.name) }}
+    </div>
     <button class="btn btn-warning">Modifier</button>
     {{ form_end(form) }}
 {% endblock %}

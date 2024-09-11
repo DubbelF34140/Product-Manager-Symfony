@@ -56,4 +56,23 @@ class ProductTypeRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findBySearchTermAndCategory(?string $search, ?string $category)
+    {
+        $qb = $this->createQueryBuilder('pt');
+
+        if ($search) {
+            $qb->andWhere('pt.name LIKE :search')
+                ->setParameter('search', '%' . $search . '%');
+        }
+
+        if ($category) {
+            $qb->join('pt.category', 'c')
+                ->andWhere('c.id = :category')
+                ->setParameter('category', $category);
+        }
+
+        return $qb->getQuery();
+    }
+
+
 }

@@ -5,6 +5,34 @@
 {% block body %}
     <h1>Liste des Types de Produit</h1>
 
+    <form method="get" action="{{ path('app_product_type_index') }}" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <form class="search-form" method="get">
+                    <div class="search-input-container">
+                        <input type="text" class="form-control search-bar" name="search" placeholder="Rechercher par type de produits" value="{{ search }}" id="search-input">
+                        <button type="button" class="clear-btn" id="clear-search">&times;</button>
+                        <button type="submit" class="btn search-btn">🔍</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4">
+                <select name="category" class="form-control">
+                    <option value="">Toutes les catégories</option>
+                    {% for category in categorys %}
+                        <option value="{{ category.id }}" {% if category.id == app.request.query.get('category') %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </div>
+        </div>
+    </form>
+
     <table class="table">
         <thead>
         <tr>
@@ -22,13 +50,48 @@
                 <td>{{ product_type.category.name }}</td>
                 <td>
                     <a href="{{ path('app_product_type_show', {id: product_type.id}) }}" class="btn btn-primary">Voir</a>
-                    <a href="{{ path('app_product_type_edit', {id: product_type.id}) }}" class="btn btn-warning">Modifier</a>
-                    <a href="{{ path('app_product_type_delete', {id: product_type.id}) }}" class="btn btn-danger">Supprimer</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_product_type_edit', {id: product_type.id}) }}" class="btn btn-warning">Modifier</a>
+                        <a href="{{ path('app_product_type_delete', {id: product_type.id}) }}" class="btn btn-danger">Supprimer</a>
+                    {% endif %}
                 </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucun type de produit trouvé.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
+    <nav>
+        <ul class="pagination justify-content-center">
+            {% if previousPage is not null %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('app_product_type_index', { page: previousPage, search: search, category: category }) }}">Précédent</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">Précédent</a>
+                </li>
+            {% endif %}
+            {% for page in 1..totalPages %}
+                <li class="page-item {% if currentPage == page %}active{% endif %}">
+                    <a class="page-link" href="{{ path('app_product_type_index', { page: page, search: search, category: category }) }}">{{ page }}</a>
+                </li>
+            {% endfor %}
+            {% if nextPage is not null %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ path('app_product_type_index', { page: nextPage, search: search, category: category }) }}">Suivant</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a class="page-link">Suivant</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
+    {# Lien pour ajouter un nouveau type de produit #}
     <a href="{{ path('app_product_type_new') }}" class="btn btn-success">Ajouter un Type de Produit</a>
 {% endblock %}

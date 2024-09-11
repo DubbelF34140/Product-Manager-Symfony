@@ -1,10 +1,45 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Détails du produit{% endblock %}
+
 {% block body %}
-
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h1 class="card-title">{{ product.productType.name }}</h1>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Numéro de série :</strong> {{ product.serialNumber }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Marque :</strong> {{ product.productType.brand.name }}</p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p><strong>Catégorie :</strong> {{ product.productType.category.name }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Statut :</strong> <span class="badge bg-info">{{ product.status }}</span></p>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <p><strong>Commentaire :</strong> {{ product.comment }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <h3>QR Code</h3>
+                        <img src="{{ path('app_product_qrcode', {id: product.id}) }}" alt="QR Code du produit" class="img-fluid my-3">
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ path('app_product_index') }}" class="btn btn-primary">Retour à la liste des produits</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
-
-{% block title %}
-
-{% endblock %}
-

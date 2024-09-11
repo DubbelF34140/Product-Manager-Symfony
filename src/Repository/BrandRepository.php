@@ -40,4 +40,19 @@ class BrandRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findBySearchTerm(float|bool|int|string|null $search)
+    {
+        $queryBuilder = $this->createQueryBuilder('b');
+
+        if ($search) {
+            $queryBuilder
+                ->andWhere('b.name LIKE :searchTerm')
+                ->setParameter('searchTerm', '%' . $search . '%')
+                ->orderBy('b.name', 'ASC');
+        }
+
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
 }

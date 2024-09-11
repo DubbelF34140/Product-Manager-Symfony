@@ -5,6 +5,22 @@
 {% block body %}
     <h1>Liste des Catégories</h1>
 
+    {# Formulaire de recherche #}
+    <div class="col-md-4">
+        <form class="search-form" method="get">
+            <div class="search-input-container">
+                <input type="text" class="form-control search-bar" name="search" placeholder="Rechercher par type de produits" value="{{ search }}" id="search-input">
+                <button type="button" class="clear-btn" id="clear-search">&times;</button>
+                <button type="submit" class="btn search-btn">🔍</button>
+            </div>
+        </form>
+    </div>
+
+    <p>
+
+    </p>
+
+    {# Tableau des catégories #}
     <table class="table">
         <thead>
         <tr>
@@ -18,13 +34,32 @@
                 <td>{{ category.name }}</td>
                 <td>
                     <a href="{{ path('app_category_show', {id: category.id}) }}" class="btn btn-primary">Voir</a>
-                    <a href="{{ path('app_category_edit', {id: category.id}) }}" class="btn btn-warning">Modifier</a>
-                    <a href="{{ path('app_category_delete', {id: category.id}) }}" class="btn btn-danger">Supprimer</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('app_category_edit', {id: category.id}) }}" class="btn btn-warning">Modifier</a>
+                        <a href="{{ path('app_category_delete', {id: category.id}) }}" class="btn btn-danger">Supprimer</a>
+                    {% endif %}
                 </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="2">Aucune catégorie trouvée.</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_category_new') }}" class="btn btn-success">Ajouter une Catégorie</a>
+    {# Pagination #}
+    <div class="pagination">
+        {% if previousPage %}
+            <a href="{{ path('app_category_index', {page: previousPage, search: search}) }}" class="btn btn-secondary">Précédent</a>
+        {% endif %}
+
+        {% if nextPage %}
+            <a href="{{ path('app_category_index', {page: nextPage, search: search}) }}" class="btn btn-secondary">Suivant</a>
+        {% endif %}
+    </div>
+    {% if is_granted('ROLE_ADMIN') %}
+        <a href="{{ path('app_category_new') }}" class="btn btn-success">Ajouter une Catégorie</a>
+    {% endif %}
+
 {% endblock %}

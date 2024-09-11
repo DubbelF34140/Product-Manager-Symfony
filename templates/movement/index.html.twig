@@ -3,32 +3,92 @@
 {% block title %}Historique des Mouvements{% endblock %}
 
 {% block body %}
-    <h1>Historique des Mouvements</h1>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Historique des Mouvements</h1>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Type</th>
-            <th>Date</th>
-            <th>Produits déplacés</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for movement in movements %}
+        <!-- Formulaire de recherche -->
+        <div class="col-md-4">
+            <form class="search-form" method="get">
+                <div class="search-input-container">
+                    <input type="text" class="form-control search-bar" name="search" placeholder="Rechercher par type de produits" value="{{ search }}" id="search-input">
+                    <button type="button" class="clear-btn" id="clear-search">&times;</button>
+                    <button type="submit" class="btn search-btn">🔍</button>
+                </div>
+            </form>
+        </div>
+        <p>
+
+        </p>
+        <!-- Bouton pour ajouter un mouvement -->
+        {% if is_granted('ROLE_USER') %}
+        <div class="text-left mt-4">
+            <a href="{{ path('app_movement_new') }}" class="btn btn-success">Enregistrer un Mouvement</a>
+        </div>
+        {% endif %}
+
+        <p>
+
+        </p>
+
+        <!-- Table des mouvements -->
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark">
             <tr>
-                <td>{{ movement.type }}</td>
-                <td>{{ movement.date|date('Y-m-d H:i') }}</td>
-                <td>
-                    <ul>
-                        {% for product in movement.products %}
-                            <li>{{ product.productType.name }} (S/N: {{ product.serialNumber }})</li>
-                        {% endfor %}
-                    </ul>
-                </td>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Produits déplacés</th>
             </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            {% if movements %}
+                {% for movement in movements %}
+                    <tr>
+                        <td>{{ movement.type }}</td>
+                        <td>{{ movement.date|date('Y-m-d H:i') }}</td>
+                        <td>
+                            <ul>
+                                {% for product in movement.products %}
+                                    <li>{{ product.productType.name }} (S/N: {{ product.serialNumber }})</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3" class="text-center">Aucun mouvement trouvé.</td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
 
-    <a href="{{ path('app_movement_new') }}" class="btn btn-success">Enregistrer un Mouvement</a>
+        <!-- Pagination -->
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if previousPage is not null %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('app_movement_index', { page: previousPage, search: search }) }}">Précédent</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">Précédent</a>
+                    </li>
+                {% endif %}
+                {% for page in 1..totalPages %}
+                    <li class="page-item {% if currentPage == page %}active{% endif %}">
+                        <a class="page-link" href="{{ path('app_movement_index', { page: page, search: search }) }}">{{ page }}</a>
+                    </li>
+                {% endfor %}
+                {% if nextPage is not null %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('app_movement_index', { page: nextPage, search: search }) }}">Suivant</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">Suivant</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
 {% endblock %}

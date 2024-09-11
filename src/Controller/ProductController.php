@@ -8,16 +8,18 @@ use App\Form\ProducFormType;
 use App\Repository\ProductRepository;
 use App\Repository\ProductTypeRepository;
 use App\Service\ProductQuantityService;
+use App\Service\QrCodeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ProductController extends AbstractController
 {
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product', name: 'app_product_index')]
     public function index(
         ProductRepository $productRepository,
@@ -27,23 +29,18 @@ class ProductController extends AbstractController
         ProductQuantityService $productQuantityService,
         PaginatorInterface $paginator // Pour la pagination
     ): Response {
-        // Récupérer la recherche
         $search = $request->query->get('search', '');
 
-        // Récupérer tous les types de produits et filtrer selon la recherche
         $productTypesQuery = $productTypeRepository->findBySearchTerm($search);
 
-        // Pagination des résultats
-        $pagination = $paginator->paginate(
-            $productTypesQuery,
-            $request->query->getInt('page', 1), // Numéro de la page, par défaut 1
-            8 // Nombre de résultats par page
-        );
+        $page = $request->query->getInt('page', 1);
 
-        // Préparer le tableau productsByType
+        $paginatedProductTypes = $paginator->paginate($productTypesQuery, $page, 8);
+
         $productsByType = [];
-        foreach ($pagination as $type) {
-            $productsByType[$type->getId()] = [
+
+        foreach ($paginatedProductTypes as $type) {
+            $productsByType[] = [
                 'id' => $type->getId(),
                 'name' => $type->getName(),
                 'quantity' => $productQuantityService->getProductQuantitiesByType($type),
@@ -63,7 +60,6 @@ class ProductController extends AbstractController
             $movement->setType("Entrée");
             $product->setStatus("Entrée");
 
-            // Sauvegarder le produit et le mouvement
             $em->persist($movement);
             $em->persist($product);
             $em->flush();
@@ -73,12 +69,16 @@ class ProductController extends AbstractController
 
         return $this->render('product/index.html.twig', [
             'productsByType' => $productsByType,
-            'pagination' => $pagination, // Ajout de la pagination à la vue
             'form' => $form->createView(),
-            'search' => $search
+            'search' => $search,
+            'currentPage' => $page,
+            'totalPages' => ceil($paginatedProductTypes->getTotalItemCount() / 8),
+            'previousPage' => $page > 1 ? $page - 1 : null,
+            'nextPage' => $page < ceil($paginatedProductTypes->getTotalItemCount() / 8) ? $page + 1 : null,
         ]);
     }
 
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/{id}/sav', name: 'app_product_sav', methods: ['POST'])]
     public function savProduct(int $id,ProductRepository $productRepository, EntityManagerInterface $em): Response
     {
@@ -104,7 +104,7 @@ class ProductController extends AbstractController
         // Rediriger vers la liste des produits après modification
         return $this->redirectToRoute('app_product_index');
     }
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/{id}/rep', name: 'app_product_rep', methods: ['POST'])]
     public function repProduct(int $id,ProductRepository $productRepository, EntityManagerInterface $em): Response
     {
@@ -131,7 +131,7 @@ class ProductController extends AbstractController
         // Rediriger vers la liste des produits après modification
         return $this->redirectToRoute('app_product_index');
     }
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/{id}', name: 'app_product_show', requirements: ['id' => '\d+'])]
     public function show(int $id, ProductRepository $productRepository): Response
     {
@@ -145,7 +145,7 @@ class ProductController extends AbstractController
             'product' => $product,
         ]);
     }
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/{id}/delete', name: 'app_product_delete')]
     public function delete(EntityManagerInterface $em, Product $product): Response
     {
@@ -164,7 +164,7 @@ class ProductController extends AbstractController
 
         return $this->redirectToRoute('app_product_index');
     }
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/{id}/serials', name: 'app_product_serials')]
     public function showSerialNumbers(Product $product): Response
     {
@@ -173,7 +173,7 @@ class ProductController extends AbstractController
             'serialNumbers' => $product->getSerialNumber(),
         ]);
     }
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/{id}/remove_serial', name: 'app_product_remove_serial', methods: ['POST'])]
     public function removeSerialNumber(Request $request, Product $product, EntityManagerInterface $em): Response
     {
@@ -186,7 +186,7 @@ class ProductController extends AbstractController
 
         return $this->redirectToRoute('app_product_index');
     }
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/export', name: 'app_product_export')]
     public function export(): Response
     {
@@ -195,7 +195,7 @@ class ProductController extends AbstractController
     }
 
 
-
+    #[IsGranted("ROLE_USER")]
     #[Route('/product/new', name: 'app_product_new')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -241,14 +241,13 @@ class ProductController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
-    #[Route('/product/{id}/edit', name: 'app_product_edit')]
-    public function edit(Request $request, Product $product, ProductTypeRepository $productTypeRepository, EntityManagerInterface $em): Response
+    #[IsGranted("ROLE_USER")]
+    #[Route('/product/{id}/edit', name: 'app_product_edit', requirements: ['id' => '\d+'])]
+    public function edit(Request $request, Product $product, ProductTypeRepository $productTypeRepository,ProductRepository $productRepository, EntityManagerInterface $em): Response
     {
-        // Le produit est injecté ici via l'ID
-        // S'il n'est pas trouvé, Symfony générera une exception
 
-        // Récupérer tous les types de produits pour l'affichage dans le formulaire
+        $product = $productRepository->find($product->getId());
+
         $productTypes = $productTypeRepository->findAll();
 
         // Traitement du formulaire
@@ -285,6 +284,13 @@ class ProductController extends AbstractController
             'product' => $product,
             'productTypes' => $productTypes,
         ]);
+    }
+
+    #[IsGranted("ROLE_USER")]
+    #[Route('/product/{id}/qrcode', name: 'app_product_qrcode')]
+    public function generateQrCode(Product $product, QrCodeService $qrCodeService): Response
+    {
+        return $qrCodeService->generateQrCode($product->getSerialNumber());
     }
 
 }

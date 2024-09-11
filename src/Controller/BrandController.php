@@ -8,22 +8,43 @@ use App\Repository\BrandRepository;
 use App\Repository\ProductTypeRepository;
 use App\Service\ProductQuantityService;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class BrandController extends AbstractController
 {
+
+    #[IsGranted("ROLE_USER")]
     #[Route('/brand', name: 'app_brand_index')]
-    public function index(BrandRepository $brandRepository): Response
-    {
-        $brands = $brandRepository->findAll();
+    public function index(
+        BrandRepository $brandRepository,
+        Request $request,
+        PaginatorInterface $paginator // Ajout de la pagination
+    ): Response {
+        // Récupérer le terme de recherche
+        $search = $request->query->get('search', '');
+        $page = $request->query->getInt('page', 1);
+
+        // Récupérer les catégories en fonction du terme de recherche
+        $brandsQuery = $brandRepository->findBySearchTerm($search);
+
+        // Pagination des résultats
+        $brands = $paginator->paginate($brandsQuery, $page, 8);
+
         return $this->render('brand/index.html.twig', [
             'brands' => $brands,
+            'search' => $search,
+            'currentPage' => $page,
+            'totalPages' => ceil($brands->getTotalItemCount() / 8),
+            'previousPage' => $page > 1 ? $page - 1 : null,
+            'nextPage' => $page < ceil($brands->getTotalItemCount() / 8) ? $page + 1 : null,
         ]);
     }
-
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/brand/new', name: 'app_brand_new')]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
@@ -42,6 +63,7 @@ class BrandController extends AbstractController
         ]);
     }
 
+    #[IsGranted("ROLE_USER")]
     #[Route('/brand/{id}', name: 'app_brand_show')]
     public function show(int $id, BrandRepository $brandRepository, ProductTypeRepository $productTypeRepository, ProductQuantityService $productQuantityService): Response
     {
@@ -64,7 +86,7 @@ class BrandController extends AbstractController
             'productCounts' => $productCounts,
         ]);
     }
-
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/brand/{id}/edit', name: 'app_brand_edit')]
     public function edit(Request $request, Brand $brand, EntityManagerInterface $em): Response
     {
@@ -80,7 +102,7 @@ class BrandController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-
+    #[IsGranted("ROLE_ADMIN")]
     #[Route('/brand/{id}/delete', name: 'app_brand_delete')]
     public function delete(EntityManagerInterface $em, Brand $brand): Response
     {

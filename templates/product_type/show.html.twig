@@ -1,10 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-
-{% endblock %}
+{% block title %}Détails du type de produit{% endblock %}
 
 {% block body %}
+    <div class="container mt-5">
+        <h1>Détails du type de produit : {{ product_type.name }}</h1>
 
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">Informations générales</h5>
+                <p><strong>Nom :</strong> {{ product_type.name }}</p>
+                <p><strong>Catégorie :</strong> {{ product_type.category.name }}</p>
+                <p><strong>Nombre de produits liés :</strong> {{ product_type.products|length }}</p>
+            </div>
+        </div>
+
+        <!-- Lien pour revenir à la liste des types de produits -->
+        <a href="{{ path('app_product_type_index') }}" class="btn btn-secondary mt-3">Retour à la liste des types de produits</a>
+    </div>
 {% endblock %}
-

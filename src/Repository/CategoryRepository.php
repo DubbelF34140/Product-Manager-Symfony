@@ -40,4 +40,20 @@ class CategoryRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function findBySearchTerm(float|bool|int|string|null $search)
+    {
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        if ($search) {
+            $queryBuilder
+                ->andWhere('c.name LIKE :searchTerm')
+                ->setParameter('searchTerm', '%' . $search . '%')
+                ->orderBy('c.name', 'ASC');
+        }
+
+        return $queryBuilder
+            ->getQuery()
+            ->getResult();
+    }
 }

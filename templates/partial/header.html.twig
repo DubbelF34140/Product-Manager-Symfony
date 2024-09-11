@@ -3,13 +3,27 @@
         <a class="navbar-brand" href="{{ path('app_main_index') }}">Gestion des Stocks</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_brand_index') }}">Marques</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_category_index') }}">Catégories</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_product_type_index') }}">Types de produit</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_product_index') }}">Produits</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_movement_index') }}">Mouvements</a></li>
-                <li class="nav-item"><a class="nav-link" href="{{ path('app_scan') }}">Scanner</a></li>
+                {% if is_granted('ROLE_USER') %}
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_product_index') }}">Produits</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_movement_index') }}">Mouvements</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_product_type_index') }}">Types de produit</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_brand_index') }}">Marques</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_category_index') }}">Catégories</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ path('app_scan') }}">Scanner</a></li>
+                {% endif %}
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a class="nav-link" href="{{ path('app_user_list') }}">Users</a>
+                {% endif %}
             </ul>
+        </div>
+        <div class="d-flex align-items-center ms-auto">
+            {% if app.user %}
+                <span class="me-2">{{ app.user.email }}</span>
+                <a class="btn btn-sm btn-secondary ms-2" href="{{ path('app_logout') }}">Logout</a>
+            {% else %}
+                <a class="btn btn-sm btn-secondary" href="{{ path('app_login') }}">Login</a>
+                <a class="btn btn-sm btn-secondary" href="{{ path('app_register') }}">Register</a>
+            {% endif %}
         </div>
     </nav>
 </header>
