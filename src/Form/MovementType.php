@@ -35,8 +35,8 @@ class MovementType extends AbstractType
                 'choice_label' => function (Product $product) {
                     return $product->getProductType()->getName() . ' (S/N: ' . $product->getSerialNumber() . ')';
                 },
-                'multiple' => true,  // Permet de sélectionner plusieurs produits
-                'expanded' => false,  // Menu déroulant pour sélectionner plusieurs produits
+                'multiple' => true,
+                'expanded' => false,
             ]);
     }
 

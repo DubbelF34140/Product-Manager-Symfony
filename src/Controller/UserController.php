@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +27,6 @@ class UserController extends AbstractController
             'users' => $users,
         ]);
     }
-
 
     #[Route('/account', name: 'account')]
     public function monCompte(): Response

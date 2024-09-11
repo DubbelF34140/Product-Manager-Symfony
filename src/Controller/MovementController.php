@@ -31,10 +31,8 @@ class MovementController extends AbstractController
     {
         $search = $request->query->get('search', '');
         $query = $movementRepository->findBySearch($search);
-
-        // Pagination
         $page = $request->query->getInt('page', 1);
-        $movements = $paginator->paginate($query, $page, 10);  // 10 mouvements par page
+        $movements = $paginator->paginate($query, $page, 10);
 
         return $this->render('movement/index.html.twig', [
             'movements' => $movements,
@@ -52,14 +50,10 @@ class MovementController extends AbstractController
     {
         $movement = new Movement();
         $form = $this->createForm(MovementType::class, $movement);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // Sauvegarder le mouvement
             $em->persist($movement);
             $em->flush();
-
-            // Mettre à jour les statuts des produits associés au mouvement
             $this->productUpdateStatusService->updateProductStatus($movement);
 
             return $this->redirectToRoute('app_movement_index');

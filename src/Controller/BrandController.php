@@ -20,19 +20,10 @@ class BrandController extends AbstractController
 
     #[IsGranted("ROLE_USER")]
     #[Route('/brand', name: 'app_brand_index')]
-    public function index(
-        BrandRepository $brandRepository,
-        Request $request,
-        PaginatorInterface $paginator // Ajout de la pagination
-    ): Response {
-        // Récupérer le terme de recherche
+    public function index(BrandRepository $brandRepository, Request $request, PaginatorInterface $paginator): Response {
         $search = $request->query->get('search', '');
         $page = $request->query->getInt('page', 1);
-
-        // Récupérer les catégories en fonction du terme de recherche
         $brandsQuery = $brandRepository->findBySearchTerm($search);
-
-        // Pagination des résultats
         $brands = $paginator->paginate($brandsQuery, $page, 8);
 
         return $this->render('brand/index.html.twig', [
@@ -50,7 +41,6 @@ class BrandController extends AbstractController
     {
         $brand = new Brand();
         $form = $this->createForm(BrandType::class, $brand);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->persist($brand);
@@ -67,18 +57,12 @@ class BrandController extends AbstractController
     #[Route('/brand/{id}', name: 'app_brand_show')]
     public function show(int $id, BrandRepository $brandRepository, ProductTypeRepository $productTypeRepository, ProductQuantityService $productQuantityService): Response
     {
-        // Récupérer la marque
         $brand = $brandRepository->find($id);
-
-        // Récupérer tous les types de produits associés à la marque
         $productTypes = $productTypeRepository->findBy(['brand' => $brand]);
-
-        // Calculer le nombre de produits par type de produit
         $productCounts = [];
         foreach ($productTypes as $productType) {
             $productCounts[] = $productQuantityService->getProductQuantitiesByType($productType);  // Assurez-vous que l'entité ProductType a une relation avec les produits.
         }
-
 
         return $this->render('brand/show.html.twig', [
             'brand' => $brand,
@@ -86,12 +70,12 @@ class BrandController extends AbstractController
             'productCounts' => $productCounts,
         ]);
     }
+
     #[IsGranted("ROLE_ADMIN")]
     #[Route('/brand/{id}/edit', name: 'app_brand_edit')]
     public function edit(Request $request, Brand $brand, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(BrandType::class, $brand);
-
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
@@ -102,12 +86,14 @@ class BrandController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
     #[IsGranted("ROLE_ADMIN")]
     #[Route('/brand/{id}/delete', name: 'app_brand_delete')]
     public function delete(EntityManagerInterface $em, Brand $brand): Response
     {
         $em->remove($brand);
         $em->flush();
+
         return $this->redirectToRoute('app_brand_index');
     }
 }

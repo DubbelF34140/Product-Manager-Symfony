@@ -6,7 +6,6 @@
     <div class="container mt-5">
         <h1 class="mb-4 text-center">Historique des Mouvements</h1>
 
-        <!-- Formulaire de recherche -->
         <div class="col-md-4">
             <form class="search-form" method="get">
                 <div class="search-input-container">
@@ -19,7 +18,6 @@
         <p>
 
         </p>
-        <!-- Bouton pour ajouter un mouvement -->
         {% if is_granted('ROLE_USER') %}
         <div class="text-left mt-4">
             <a href="{{ path('app_movement_new') }}" class="btn btn-success">Enregistrer un Mouvement</a>
@@ -30,7 +28,6 @@
 
         </p>
 
-        <!-- Table des mouvements -->
         <table class="table table-bordered table-striped">
             <thead class="table-dark">
             <tr>
@@ -62,7 +59,6 @@
             </tbody>
         </table>
 
-        <!-- Pagination -->
         <nav>
             <ul class="pagination justify-content-center">
                 {% if previousPage is not null %}

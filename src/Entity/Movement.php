@@ -25,9 +25,6 @@ class Movement
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
     #[ORM\ManyToMany(targetEntity: Product::class)]
     private Collection $products;
 

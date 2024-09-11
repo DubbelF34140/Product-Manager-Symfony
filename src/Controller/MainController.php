@@ -15,22 +15,17 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main_index')]
     public function index(ProductTypeRepository $productTypeRepository, ProductQuantityService $productQuantityService): Response
     {
-        // Récupérer tous les types de produits
         $productTypes = $productTypeRepository->findAll();
-
-        // Préparer les données pour le graphique
         $productTypeNames = [];
         $productCounts = [];
-
         foreach ($productTypes as $productType) {
-            $productTypeNames[] = $productType->getName();  // Nom du type de produit
-            $productCounts[] = $productQuantityService->getProductQuantitiesByType($productType);  // Quantité en stock par type
+            $productTypeNames[] = $productType->getName();
+            $productCounts[] = $productQuantityService->getProductQuantitiesByType($productType);
         }
 
-        // Passer les données au template
         return $this->render('home/home.html.twig', [
-            'productTypeNames' => json_encode($productTypeNames),  // Convertir en JSON pour Chart.js
-            'productCounts' => json_encode($productCounts),  // Convertir en JSON pour Chart.js
+            'productTypeNames' => json_encode($productTypeNames),
+            'productCounts' => json_encode($productCounts),
         ]);
     }
 }

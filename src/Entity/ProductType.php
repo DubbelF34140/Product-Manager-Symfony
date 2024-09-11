@@ -32,9 +32,6 @@ class ProductType
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
-    /**
-     * @var Collection<int, Product>
-     */
     #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'productType', orphanRemoval: true)]
     private Collection $products;
 

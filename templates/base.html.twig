@@ -39,7 +39,6 @@
     const searchInput = document.getElementById('search-input');
     const clearSearchButton = document.getElementById('clear-search');
 
-    // Afficher le bouton "clear" quand du texte est saisi
     searchInput.addEventListener('input', function() {
         if (this.value.length > 0) {
             clearSearchButton.style.display = 'inline-block';
@@ -48,11 +47,10 @@
         }
     });
 
-    // Effacer le champ de recherche lorsqu'on clique sur la croix
     clearSearchButton.addEventListener('click', function() {
         searchInput.value = '';
         clearSearchButton.style.display = 'none';
-        searchInput.focus(); // Réfocaliser sur l'input après avoir effacé
+        searchInput.focus();
     });
 </script>
 <style>

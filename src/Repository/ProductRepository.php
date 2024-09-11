@@ -45,7 +45,6 @@ class ProductRepository extends ServiceEntityRepository
         $qb = $this->createQueryBuilder('p');
 
         if ($search) {
-            // Rechercher dans le nom du produit en utilisant LIKE pour la correspondance partielle
             $qb->andWhere('p.serialNumber LIKE :search')
                 ->setParameter('search', '%' . $search . '%');
         }

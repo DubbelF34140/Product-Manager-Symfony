@@ -5,7 +5,6 @@
 {% block body %}
     <h1>Liste des Marques</h1>
 
-    {# Formulaire de recherche #}
     <div class="col-md-4">
         <form class="search-form" method="get">
             <div class="search-input-container">
@@ -46,7 +45,6 @@
         </tbody>
     </table>
 
-    {# Pagination #}
     <div class="pagination">
         {% if previousPage %}
             <a href="{{ path('app_brand_index', {page: previousPage, search: search}) }}" class="btn btn-secondary">Précédent</a>

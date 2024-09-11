@@ -9,18 +9,17 @@
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>
-            // Extraire les noms des types de produits et les quantités de produits associées depuis les données Twig
             const productTypes = {{ productTypes|map(pt => pt.name)|json_encode()|raw }};
             const productCounts = {{ productCounts|json_encode()|raw }};
 
             const ctx = document.getElementById('brandChart').getContext('2d');
             const brandChart = new Chart(ctx, {
-                type: 'bar',  // Type de graphique
+                type: 'bar',
                 data: {
-                    labels: productTypes,  // Afficher les noms des types de produits
+                    labels: productTypes,
                     datasets: [{
                         label: 'Nombre de produits',
-                        data: productCounts,  // Afficher le nombre de produits pour chaque type
+                        data: productCounts,
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1

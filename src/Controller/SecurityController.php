@@ -12,12 +12,9 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // Si l'utilisateur est déjà connecté, on le redirige
         if ($this->getUser()) {
             return $this->redirectToRoute('app_main_index'); // Redirige après login
         }
-
-        // Récupérer les erreurs de connexion
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastEmail = $authenticationUtils->getLastUsername();
 
@@ -30,7 +27,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Ce contrôleur peut être vide : Symfony gère automatiquement la déconnexion
         throw new \Exception('Don\'t forget to activate logout in security.yaml');
     }
 }

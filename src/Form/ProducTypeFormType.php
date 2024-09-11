@@ -21,14 +21,14 @@ class ProducTypeFormType extends AbstractType
             ])
             ->add('brand', EntityType::class, [
                 'class' => Brand::class,
-                'choice_label' => 'name',  // Affiche le nom de la marque
+                'choice_label' => 'name',
                 'label' => 'Marque',
                 'placeholder' => 'Sélectionner une marque',
                 'attr' => ['class' => 'form-control'],
             ])
             ->add('category', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'name',  // Affiche le nom de la catégorie
+                'choice_label' => 'name',
                 'label' => 'Catégorie',
                 'placeholder' => 'Sélectionner une catégorie',
                 'attr' => ['class' => 'form-control'],

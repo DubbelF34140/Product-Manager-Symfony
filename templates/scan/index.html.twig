@@ -5,8 +5,6 @@
 {% block body %}
     <div class="container mt-5">
         <h1 class="text-center mb-4">Recherche de produit par numéro de série</h1>
-
-        <!-- Formulaire de recherche -->
         <div class="card shadow-sm mb-5">
             <div class="card-body">
                 <form method="get" action="{{ path('app_scan') }}">
@@ -19,7 +17,6 @@
             </div>
         </div>
 
-        <!-- Affichage du produit si trouvé -->
         {% if product %}
             <div class="card shadow-sm mb-5">
                 <div class="card-header">

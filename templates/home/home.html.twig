@@ -10,16 +10,14 @@
         <p>Utilisez les sections ci-dessous pour naviguer et administrer votre système de gestion de stock.</p>
     </div>
 
-    <!-- Section Graphique -->
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <h3 class="text-center">Produits en stock par type de produit</h3>
-            <canvas id="productChart"></canvas> <!-- Canvas pour Chart.js -->
+            <canvas id="productChart"></canvas>
         </div>
     </div>
 
     {% if is_granted('ROLE_USER') %}
-    <!-- Cartes de navigation -->
     <div class="row text-center mt-5">
         <div class="col-md-4">
             <div class="card">
@@ -54,21 +52,20 @@
 
     </div>
 
-    <!-- Chargement de Chart.js et génération du graphique -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var ctx = document.getElementById('productChart').getContext('2d');
 
-        var productTypes = {{ productTypeNames|raw }};  // Noms des types de produits
-        var productCounts = {{ productCounts|raw }};  // Nombre de produits en stock par type
+        var productTypes = {{ productTypeNames|raw }};
+        var productCounts = {{ productCounts|raw }};
 
         const productChart = new Chart(ctx, {
-            type: 'bar',  // Type de graphique
+            type: 'bar',
             data: {
-                labels: productTypes,  // Afficher les noms des types de produits
+                labels: productTypes,
                 datasets: [{
                     label: 'Nombre de produits en stock',
-                    data: productCounts,  // Afficher le nombre de produits pour chaque type
+                    data: productCounts,
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1

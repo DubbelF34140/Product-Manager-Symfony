@@ -14,12 +14,12 @@
 
             const ctx = document.getElementById('brandChart').getContext('2d');
             const brandChart = new Chart(ctx, {
-                type: 'bar',  // Type de graphique
+                type: 'bar',
                 data: {
-                    labels: productTypes,  // Afficher les noms des types de produits
+                    labels: productTypes,
                     datasets: [{
                         label: 'Nombre de produits',
-                        data: productCounts,  // Afficher le nombre de produits pour chaque type
+                        data: productCounts,
                         backgroundColor: 'rgba(83,192,75,0.2)',
                         borderColor: 'rgb(75,192,81)',
                         borderWidth: 1

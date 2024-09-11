@@ -5,7 +5,6 @@
 {% block body %}
     <h1>Liste des Catégories</h1>
 
-    {# Formulaire de recherche #}
     <div class="col-md-4">
         <form class="search-form" method="get">
             <div class="search-input-container">
@@ -20,7 +19,6 @@
 
     </p>
 
-    {# Tableau des catégories #}
     <table class="table">
         <thead>
         <tr>
@@ -48,7 +46,6 @@
         </tbody>
     </table>
 
-    {# Pagination #}
     <div class="pagination">
         {% if previousPage %}
             <a href="{{ path('app_category_index', {page: previousPage, search: search}) }}" class="btn btn-secondary">Précédent</a>
